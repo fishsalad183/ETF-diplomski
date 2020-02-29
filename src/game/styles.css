@@ -1,0 +1,118 @@
+* {
+    -fx-base-color: #434145;
+}
+
+.text {
+    -fx-font-family: "Arial";
+}
+
+.options-hbox {
+    -fx-alignment: center;
+}
+
+.label {
+    -fx-padding: 5 10 5 10;
+    -fx-pref-width: 200px;
+    -fx-alignment: center;
+
+    /*-fx-font-family: "Arial";*/
+    -fx-text-fill: white;
+    -fx-text-fill: linear-gradient(white, #d0d0d0);
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+
+.label .text {
+    -fx-stroke: black;
+    -fx-stroke-width: 1;
+}
+
+.scores-grid-pane {
+    -fx-pref-width: 600px;
+    -fx-alignment: center;
+}
+
+.scores-label-header {
+    -fx-font-size: 24px;
+    -fx-underline: true;
+}
+
+.scores-label-place {
+    -fx-pref-width: 50px;
+    -fx-alignment: BASELINE_RIGHT;
+}
+
+.scores-label-name {
+    -fx-pref-width: 360px;
+}
+
+.scores-label-points {
+    -fx-pref-width: 100px;
+}
+
+/*.scores-label-row-name {
+    -fx-pref-width: 300px;
+}
+
+.scores-label-row-points {
+    -fx-pref-width: 100px;
+}*/
+
+.text-field {
+    /*-fx-font-family: "Arial";*/
+    /*-fx-text-fill: linear-gradient(black, #202020);*/
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-padding: 10 20 10 20;
+    -fx-pref-width: 400px;
+    -fx-min-width: 400px;
+    -fx-max-width: 400px;
+}
+
+.button {
+    /*    -fx-background-color: #090a0c, linear-gradient(#38424b 0%, #1f2429 20%, #191d22 100%), linear-gradient(#20262b, #191d22), radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));*/
+    -fx-background-color: -fx-base-color;
+    -fx-background-radius: 5, 4, 3, 5;
+    -fx-background-insets: 0, 1, 2, 0;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.6), 5, 0.0, 0, 1);
+    /*-fx-font-family: "Arial";*/
+    -fx-text-fill: linear-gradient(white, #d0d0d0);
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-padding: 10 20 10 20;
+    -fx-pref-width: 400px;
+}
+
+.button:focused {
+    -fx-background-color: -fx-base-color, radial-gradient(center 50% 0%, radius 100%, rgba(114,131,148,0.9), rgba(255,255,255,0));
+}
+
+.button:hover {
+    -fx-background-color: derive(-fx-base-color, 30%);
+}
+
+.button:armed {
+    -fx-background-color: derive(-fx-base-color, -40%);
+}
+
+.button:disabled {
+    -fx-opacity: 0.4;
+}
+
+.hud-text {
+    /*-fx-font-family: "Arial";*/
+    -fx-font-size: 37;
+    -fx-text-alignment: center;
+    -fx-stroke: black;
+    -fx-stroke-width: 1;
+}
+
+.hud-vbox {
+    -fx-padding: 15;
+    -fx-spacing: 10;
+}
+
+.slider {
+    -fx-pref-width: 400px;
+}
