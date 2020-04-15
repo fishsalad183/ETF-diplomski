@@ -13,6 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.Observable;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -29,11 +30,13 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -69,7 +72,7 @@ public class Menu implements EventHandler<Event> {
         vbox.setSpacing(10);
         vbox.setPrefWidth(400);
         root.getChildren().add(vbox);
-        
+
         importSettings();
     }
 
@@ -82,28 +85,49 @@ public class Menu implements EventHandler<Event> {
             }
         } else if (e.getCode() == KeyCode.ENTER) {
             if (e.getEventType() == KeyEvent.KEY_PRESSED) {
-                Node currentlyFocused = game.getGlobalScene().focusOwnerProperty().get();
+                Node currentlyFocused = game.getGlobalScene().getFocusOwner();
                 if (currentlyFocused instanceof Button) {
                     ((Button) currentlyFocused).arm();
                 }
             } else if (e.getEventType() == KeyEvent.KEY_RELEASED) {
-                Node currentlyFocused = game.getGlobalScene().focusOwnerProperty().get();
+                Node currentlyFocused = game.getGlobalScene().getFocusOwner();
                 if (currentlyFocused instanceof Button) {
                     if (((Button) currentlyFocused).isArmed()) {
                         ((Button) currentlyFocused).fire();
                         ((Button) currentlyFocused).disarm();
                     }
+                } else if (currentlyFocused instanceof TextField) {
+                    ObservableList<Node> vboxChildren = vbox.getChildren();
+                    for (int i = vboxChildren.indexOf(currentlyFocused) + 1; i < vboxChildren.size(); i++) {
+                        Node node = vboxChildren.get(i);
+                        if (node.isFocusTraversable() && !node.isDisabled()) {
+                            node.requestFocus();
+                            break;
+                        }
+                    }
                 }
             }
-        } else if (e.getCode() == KeyCode.UP || e.getCode() == KeyCode.DOWN) {
-            Node currentlyFocused = game.getGlobalScene().focusOwnerProperty().get();
+        } else if ((e.getCode() == KeyCode.UP || e.getCode() == KeyCode.DOWN) && e.getEventType() == KeyEvent.KEY_PRESSED) {
+            Node currentlyFocused = game.getGlobalScene().getFocusOwner();
             if (currentlyFocused == null) {
                 for (Node node : vbox.getChildren()) {
-                    if (node instanceof TextField || node instanceof Button) {
+                    if (node.isFocusTraversable() && !node.isDisabled()) {
                         node.requestFocus();
                         break;
                     }
                 }
+            }
+        }
+    }
+
+    private void addMouseFocusHandlers(Pane pane) {
+        for (Node node : pane.getChildren()) {
+            if (node.isFocusTraversable()) {
+                node.addEventHandler(MouseEvent.MOUSE_MOVED, (event) -> {
+                    if (node.isHover() && !(node instanceof TextField) && !(game.getGlobalScene().getFocusOwner() instanceof TextField)) {
+                        node.requestFocus();
+                    }
+                });
             }
         }
     }
@@ -153,6 +177,27 @@ public class Menu implements EventHandler<Event> {
                         playerName = nameField.getText();
                     }
                 });
+                nameField.setFocusTraversable(true);
+                nameField.addEventHandler(KeyEvent.KEY_PRESSED, (event) -> {    // an event handler for switching focus up or down the menu when corresponding arrow keys are pressed
+                    if (event.getCode() == KeyCode.UP || event.getCode() == KeyCode.DOWN) {
+                        int indexChange = (event.getCode() == KeyCode.UP ? -1 : +1);    // UP, otherwise DOWN
+                        int index = vbox.getChildren().indexOf(nameField) + indexChange;
+                        while (index > 0 && index < vbox.getChildren().size() - 1) {
+                            Node node = vbox.getChildren().get(index);
+                            if (node.isFocusTraversable() && !node.isDisabled()) {
+                                vbox.getChildren().get(index).requestFocus();
+                                break;
+                            }
+                            index += indexChange;
+                        }
+                    }
+                });
+                nameField.addEventFilter(KeyEvent.KEY_PRESSED, (keyEvent) -> {
+                    switch (keyEvent.getCode()) {
+                        case UP:    // since there is nothing above nameField in this particular case
+                            keyEvent.consume();
+                    }
+                });
 
                 Button scores = new Button("High scores");
                 scores.setOnAction(e -> game.switchToMenu(MenuKind.SCORES));
@@ -164,12 +209,6 @@ public class Menu implements EventHandler<Event> {
                 exit.setOnAction(e -> System.exit(0));
 
                 vbox.getChildren().addAll(imageView, nameField, play, scores, options, exit);
-
-                if (play.isDisabled()) {
-                    nameField.requestFocus();
-                } else {
-                    play.requestFocus();
-                }
             }
             break;
             case PAUSE: {
@@ -187,19 +226,15 @@ public class Menu implements EventHandler<Event> {
 
                 Button main = new Button("Main menu");
                 main.setOnAction(e -> {
-//                    game.saveScoreIfNotAlreadySaved(false);
                     game.switchToMenu(MenuKind.MAIN);
                 });
 
                 Button exit = new Button("Exit");
                 exit.setOnAction(e -> {
-//                    game.saveScoreIfNotAlreadySaved(false);
                     System.exit(0);
                 });
 
                 vbox.getChildren().addAll(resume, reset, main, exit);
-
-                resume.requestFocus();
             }
             break;
             case SCORES: {
@@ -210,8 +245,6 @@ public class Menu implements EventHandler<Event> {
                 back.setOnAction(e -> game.switchToMenu(MenuKind.MAIN));
 
                 vbox.getChildren().addAll(createHighScoreTable(), back);
-
-                back.requestFocus();
             }
             break;
             case OPTIONS: {
@@ -265,14 +298,13 @@ public class Menu implements EventHandler<Event> {
                 });
 
                 vbox.getChildren().addAll(testModeHBox, musicVolumeHBox, effectsVolumeHBox, back);
-
-                back.requestFocus();
             }
             break;
             default:
                 currentMenu = null;
                 break;
         }
+        addMouseFocusHandlers(vbox);
     }
 
     public GridPane createHighScoreTable() {
@@ -353,7 +385,7 @@ public class Menu implements EventHandler<Event> {
         }
 
     }
-    
+
     void importSettings() {
         ObjectInputStream inStream = null;
         try {

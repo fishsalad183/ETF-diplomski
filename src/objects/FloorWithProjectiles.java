@@ -39,8 +39,8 @@ public class FloorWithProjectiles extends FloorWithTiles implements Animated {
             final int zIndex = i;
             launching[i] = new Timeline(
                     new KeyFrame(Duration.ZERO, r -> createProjectileOnRandomSide(zIndex, TILES_BECOMING_RED_MOMENT)),
-                    new KeyFrame(Duration.seconds(TILES_BECOMING_RED_MOMENT), "warnAndLaunch", r -> launchLastCreatedProjectile(), Arrays.stream(tiles).map(row -> row[zIndex]).map(tile -> new KeyValue(((PhongMaterial) tile.getMaterial()).diffuseColorProperty(), Color.RED, Interpolator.LINEAR)).toArray(KeyValue[]::new)),
-                    new KeyFrame(Duration.seconds(TILES_REVERTING_TO_DEFAULT_COLOR_MOMENT), "revertColor", Arrays.stream(tiles).map(row -> row[zIndex]).map(tile -> new KeyValue(((PhongMaterial) tile.getMaterial()).diffuseColorProperty(), DEFAULT_FLOOR_COLOR, Interpolator.LINEAR)).toArray(KeyValue[]::new)),
+                    new KeyFrame(Duration.seconds(TILES_BECOMING_RED_MOMENT), "warnAndLaunch", r -> launchLastCreatedProjectile(), Arrays.stream(tiles).map(col -> col[zIndex]).map(tile -> new KeyValue(((PhongMaterial) tile.getMaterial()).diffuseColorProperty(), Color.RED, Interpolator.LINEAR)).toArray(KeyValue[]::new)),
+                    new KeyFrame(Duration.seconds(TILES_REVERTING_TO_DEFAULT_COLOR_MOMENT), "revertColor", Arrays.stream(tiles).map(col -> col[zIndex]).map(tile -> new KeyValue(((PhongMaterial) tile.getMaterial()).diffuseColorProperty(), DEFAULT_FLOOR_COLOR, Interpolator.LINEAR)).toArray(KeyValue[]::new)),
                     new KeyFrame(Duration.seconds(TILES_COOLDOWN_MOMENT), "cooldown")
             );
         }

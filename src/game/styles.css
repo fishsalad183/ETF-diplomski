@@ -89,7 +89,7 @@
 }
 
 .button:hover {
-    -fx-background-color: derive(-fx-base-color, 30%);
+/*    -fx-background-color: derive(-fx-base-color, 30%);*/
 }
 
 .button:armed {
