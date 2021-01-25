@@ -1,5 +1,5 @@
 # ETF-diplomski / Bachelor's thesis
 
-Arena - a first-person 3D video game.
+Title: Razvoj laboratorijskog zadatka iz 3D grafike - video-igra preživljavanja u Areni
 
 Tech: JavaFX.
